@@ -2936,7 +2936,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
 
 #pragma mark Inline functions
 
-static NSString* WYStringFromOrientation(NSInteger orientation) {
+__unused static NSString* WYStringFromOrientation(NSInteger orientation) {
     NSString *result = @"Unknown";
     
     switch (orientation) {

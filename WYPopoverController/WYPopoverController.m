@@ -2997,21 +2997,26 @@ static float WYStatusBarHeight() {
 static float WYInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation orientation)
 {
     float angle;
-    
-    switch (orientation)
-    {
-        case UIInterfaceOrientationPortraitUpsideDown:
-            angle = M_PI;
-            break;
-        case UIInterfaceOrientationLandscapeLeft:
-            angle = -M_PI_2;
-            break;
-        case UIInterfaceOrientationLandscapeRight:
-            angle = M_PI_2;
-            break;
-        default:
-            angle = 0.0;
-            break;
+    // no transformation needed in iOS 8
+    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
+        angle = 0.0;
+    }
+    else {
+        switch (orientation)
+        {
+            case UIInterfaceOrientationPortraitUpsideDown:
+                angle = M_PI;
+                break;
+            case UIInterfaceOrientationLandscapeLeft:
+                angle = -M_PI_2;
+                break;
+            case UIInterfaceOrientationLandscapeRight:
+                angle = M_PI_2;
+                break;
+            default:
+                angle = 0.0;
+                break;
+        }
     }
     
     return angle;

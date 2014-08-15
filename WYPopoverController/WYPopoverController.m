@@ -1548,6 +1548,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     BOOL                     animated;
     BOOL                     isListeningNotifications;
     BOOL                     isInterfaceOrientationChanging;
+    BOOL                     ignoreOrientation;
     __weak UIBarButtonItem  *barButtonItem;
     CGRect                   keyboardRect;
     
@@ -1646,6 +1647,9 @@ static WYPopoverTheme *defaultTheme_ = nil;
     
     if (self)
     {
+        // ignore orientation in iOS8
+        ignoreOrientation = [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)];
+
         popoverLayoutMargins = UIEdgeInsetsMake(10, 10, 10, 10);
         keyboardRect = CGRectZero;
         animationDuration = WY_POPOVER_DEFAULT_ANIMATION_DURATION;

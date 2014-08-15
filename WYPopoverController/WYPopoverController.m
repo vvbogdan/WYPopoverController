@@ -2221,9 +2221,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
 - (void)positionPopover:(BOOL)aAnimated
 {
     CGRect savedContainerFrame = backgroundView.frame;
-    
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    
     CGSize contentViewSize = self.popoverContentSize;
     CGSize minContainerSize = WY_POPOVER_MIN_SIZE;
     
@@ -2232,10 +2230,26 @@ static WYPopoverTheme *defaultTheme_ = nil;
     float minX, maxX, minY, maxY, offset = 0;
     CGSize containerViewSize = CGSizeZero;
     
-    float overlayWidth = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.width : overlayView.bounds.size.height;
-    float overlayHeight = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.height : overlayView.bounds.size.width;
+    float overlayWidth;
+    float overlayHeight;
     
-    float keyboardHeight = UIInterfaceOrientationIsPortrait(orientation) ? keyboardRect.size.height : keyboardRect.size.width;
+    float keyboardHeight;
+
+    if (ignoreOrientation)
+    {
+        overlayWidth = overlayView.window.frame.size.width;
+        overlayHeight = overlayView.window.frame.size.height;
+
+        CGRect convertedFrame = [overlayView.window convertRect:keyboardRect toView:overlayView];
+        keyboardHeight = convertedFrame.size.height;
+    }
+    else
+    {
+        overlayWidth = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.width : overlayView.bounds.size.height;
+        overlayHeight = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.height : overlayView.bounds.size.width;
+
+        keyboardHeight = UIInterfaceOrientationIsPortrait(orientation) ? keyboardRect.size.height : keyboardRect.size.width;
+    }
     
     if (delegate && [delegate respondsToSelector:@selector(popoverControllerShouldIgnoreKeyboardBounds:)]) {
         BOOL shouldIgnore = [delegate popoverControllerShouldIgnoreKeyboardBounds:self];

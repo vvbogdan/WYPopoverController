@@ -3000,8 +3000,7 @@ static float WYInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation ori
     // no transformation needed in iOS 8
     if ([[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
         angle = 0.0;
-    }
-    else {
+    } else {
         switch (orientation)
         {
             case UIInterfaceOrientationPortraitUpsideDown:
@@ -3030,27 +3029,29 @@ static CGRect WYRectInWindowBounds(CGRect rect, UIInterfaceOrientation orientati
     float windowHeight = keyWindow.bounds.size.height;
     
     CGRect result = rect;
-    
-    if (orientation == UIInterfaceOrientationLandscapeRight) {
+    if (![[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
         
-        result.origin.x = rect.origin.y;
-        result.origin.y = windowWidth - rect.origin.x - rect.size.width;
-        result.size.width = rect.size.height;
-        result.size.height = rect.size.width;
-    }
-    
-    if (orientation == UIInterfaceOrientationLandscapeLeft) {
+        if (orientation == UIInterfaceOrientationLandscapeRight) {
+            
+            result.origin.x = rect.origin.y;
+            result.origin.y = windowWidth - rect.origin.x - rect.size.width;
+            result.size.width = rect.size.height;
+            result.size.height = rect.size.width;
+        }
         
-        result.origin.x = windowHeight - rect.origin.y - rect.size.height;
-        result.origin.y = rect.origin.x;
-        result.size.width = rect.size.height;
-        result.size.height = rect.size.width;
-    }
-    
-    if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
+        if (orientation == UIInterfaceOrientationLandscapeLeft) {
+            
+            result.origin.x = windowHeight - rect.origin.y - rect.size.height;
+            result.origin.y = rect.origin.x;
+            result.size.width = rect.size.height;
+            result.size.height = rect.size.width;
+        }
         
-        result.origin.x = windowWidth - rect.origin.x - rect.size.width;
-        result.origin.y = windowHeight - rect.origin.y - rect.size.height;
+        if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
+            
+            result.origin.x = windowWidth - rect.origin.x - rect.size.width;
+            result.origin.y = windowHeight - rect.origin.y - rect.size.height;
+        }
     }
     
     return result;
@@ -3064,20 +3065,22 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
     float windowHeight = keyWindow.bounds.size.height;
     
     CGPoint result = origin;
-    
-    if (orientation == UIInterfaceOrientationLandscapeRight) {
-        result.x = windowWidth - origin.y - size.width;
-        result.y = origin.x;
-    }
-    
-    if (orientation == UIInterfaceOrientationLandscapeLeft) {
-        result.x = origin.y;
-        result.y = windowHeight - origin.x - size.height;
-    }
-    
-    if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
-        result.x = windowWidth - origin.x - size.width;
-        result.y = windowHeight - origin.y - size.height;
+    if (![[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
+        
+        if (orientation == UIInterfaceOrientationLandscapeRight) {
+            result.x = windowWidth - origin.y - size.width;
+            result.y = origin.x;
+        }
+        
+        if (orientation == UIInterfaceOrientationLandscapeLeft) {
+            result.x = origin.y;
+            result.y = windowHeight - origin.x - size.height;
+        }
+        
+        if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
+            result.x = windowWidth - origin.x - size.width;
+            result.y = windowHeight - origin.y - size.height;
+        }
     }
     
     return result;

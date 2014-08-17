@@ -2979,20 +2979,26 @@ static NSString* WYStringFromOrientation(NSInteger orientation) {
 }
 
 static float WYStatusBarHeight() {
-    UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
-    
-    float statusBarHeight = 0;
-    {
+
+    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
         CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
-        statusBarHeight = statusBarFrame.size.height;
-        
-        if (UIDeviceOrientationIsLandscape(orienation))
+        return statusBarFrame.size.height;
+    } else {
+        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+
+        float statusBarHeight = 0;
         {
-            statusBarHeight = statusBarFrame.size.width;
+            CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
+            statusBarHeight = statusBarFrame.size.height;
+
+            if (UIDeviceOrientationIsLandscape(orientation))
+            {
+                statusBarHeight = statusBarFrame.size.width;
+            }
         }
+
+        return statusBarHeight;
     }
-    
-    return statusBarHeight;
 }
 
 static float WYInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation orientation)

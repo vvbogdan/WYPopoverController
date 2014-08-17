@@ -1924,6 +1924,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
     if (overlayView == nil)
     {
         overlayView = [[WYPopoverOverlayView alloc] initWithFrame:inView.window.bounds];
+        overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         overlayView.autoresizesSubviews = NO;
         overlayView.isAccessibilityElement = YES;
         overlayView.accessibilityTraits = UIAccessibilityTraitNone;

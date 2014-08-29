@@ -1547,6 +1547,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     WYPopoverArrowDirection  permittedArrowDirections;
     BOOL                     animated;
     BOOL                     isListeningNotifications;
+    BOOL                     isObserverAdded;
     BOOL                     isInterfaceOrientationChanging;
     BOOL                     ignoreOrientation;
     __weak UIBarButtonItem  *barButtonItem;
@@ -1958,13 +1959,18 @@ static WYPopoverTheme *defaultTheme_ = nil;
                 [strongSelf->viewController viewDidAppear:YES];
             }
             
-            if ([strongSelf->viewController respondsToSelector:@selector(preferredContentSize)])
+            if (isObserverAdded == NO)
             {
-                [strongSelf->viewController addObserver:self forKeyPath:NSStringFromSelector(@selector(preferredContentSize)) options:0 context:nil];
-            }
-            else
-            {
-                [strongSelf->viewController addObserver:self forKeyPath:NSStringFromSelector(@selector(contentSizeForViewInPopover)) options:0 context:nil];
+                isObserverAdded = YES;
+
+                if ([strongSelf->viewController respondsToSelector:@selector(preferredContentSize)])
+                {
+                    [strongSelf->viewController addObserver:self forKeyPath:NSStringFromSelector(@selector(preferredContentSize)) options:0 context:nil];
+                }
+                else
+                {
+                    [strongSelf->viewController addObserver:self forKeyPath:NSStringFromSelector(@selector(contentSizeForViewInPopover)) options:0 context:nil];
+                }
             }
             
             strongSelf->backgroundView.appearing = NO;
@@ -2672,10 +2678,15 @@ static WYPopoverTheme *defaultTheme_ = nil;
     }
     
     @try {
-        if ([viewController respondsToSelector:@selector(preferredContentSize)]) {
-            [viewController removeObserver:self forKeyPath:NSStringFromSelector(@selector(preferredContentSize))];
-        } else {
-            [viewController removeObserver:self forKeyPath:NSStringFromSelector(@selector(contentSizeForViewInPopover))];
+        if (isObserverAdded == YES)
+        {
+            isObserverAdded = NO;
+            
+            if ([viewController respondsToSelector:@selector(preferredContentSize)]) {
+                [viewController removeObserver:self forKeyPath:NSStringFromSelector(@selector(preferredContentSize))];
+            } else {
+                [viewController removeObserver:self forKeyPath:NSStringFromSelector(@selector(contentSizeForViewInPopover))];
+            }
         }
     }
     @catch (NSException * __unused exception) {}

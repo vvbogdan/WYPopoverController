@@ -2563,6 +2563,8 @@ static WYPopoverTheme *defaultTheme_ = nil;
         backgroundView.frame = containerFrame;
     }
     
+    [backgroundView setNeedsDisplay];
+    
     WY_LOG(@"popoverContainerView.frame = %@", NSStringFromCGRect(backgroundView.frame));
 }
 

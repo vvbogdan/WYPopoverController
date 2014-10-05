@@ -3202,15 +3202,27 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
     
     [overlayView removeFromSuperview];
     [overlayView setDelegate:nil];
-    
+    @try {
+        if ([viewController respondsToSelector:@selector(preferredContentSize)]) {
+            [viewController removeObserver:self forKeyPath:NSStringFromSelector(@selector(preferredContentSize))];
+        } else {
+            [viewController removeObserver:self forKeyPath:NSStringFromSelector(@selector(contentSizeForViewInPopover))];
+        }
+    }
+    @catch (NSException *exception) {
+    }
+    @finally {
+        viewController = nil;
+    }
+
+    [self unregisterTheme];
+  
     barButtonItem = nil;
     passthroughViews = nil;
-    viewController = nil;
     inView = nil;
     overlayView = nil;
     backgroundView = nil;
     
-    [self unregisterTheme];
     theme = nil;
 }
 

@@ -3203,10 +3203,14 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
     [overlayView removeFromSuperview];
     [overlayView setDelegate:nil];
     @try {
-        if ([viewController respondsToSelector:@selector(preferredContentSize)]) {
-            [viewController removeObserver:self forKeyPath:NSStringFromSelector(@selector(preferredContentSize))];
-        } else {
-            [viewController removeObserver:self forKeyPath:NSStringFromSelector(@selector(contentSizeForViewInPopover))];
+        if (isObserverAdded == YES) {
+            isObserverAdded = NO;
+            
+            if ([viewController respondsToSelector:@selector(preferredContentSize)]) {
+                [viewController removeObserver:self forKeyPath:NSStringFromSelector(@selector(preferredContentSize))];
+            } else {
+                [viewController removeObserver:self forKeyPath:NSStringFromSelector(@selector(contentSizeForViewInPopover))];
+            }
         }
     }
     @catch (NSException *exception) {

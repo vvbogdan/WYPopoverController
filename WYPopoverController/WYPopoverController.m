@@ -1085,7 +1085,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 {
     contentView = viewController.view;
     
-    contentView.frame = CGRectIntegral(CGRectMake(0, 0, self.bounds.size.width, 100));
+    contentView.frame = CGRectIntegral(CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height));
     
     [self addSubview:contentView];
     

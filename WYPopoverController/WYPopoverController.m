@@ -1927,15 +1927,11 @@ static WYPopoverTheme *defaultTheme_ = nil;
         overlayView = [[WYPopoverOverlayView alloc] initWithFrame:inView.window.bounds];
         overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         overlayView.autoresizesSubviews = NO;
-        overlayView.isAccessibilityElement = NO;
-        overlayView.accessibilityTraits = UIAccessibilityTraitNone;
         overlayView.delegate = self;
         overlayView.passthroughViews = passthroughViews;
         
         backgroundView = [[WYPopoverBackgroundView alloc] initWithContentSize:contentViewSize];
         backgroundView.appearing = YES;
-        backgroundView.isAccessibilityElement = YES;
-        backgroundView.accessibilityTraits = UIAccessibilityTraitNone;
         
         backgroundView.delegate = self;
         backgroundView.hidden = YES;

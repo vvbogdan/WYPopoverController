@@ -897,6 +897,8 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 @property (nonatomic, assign, getter = isAppearing) BOOL appearing;
 
+- (void)tapOut;
+
 - (void)setViewController:(UIViewController *)viewController;
 
 - (CGRect)outerRect;
@@ -980,7 +982,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     return self;
 }
 
--(void)tapOut
+- (void)tapOut
 {
     [self.delegate popoverBackgroundViewDidTouchOutside:self];
 }
@@ -1911,15 +1913,16 @@ static WYPopoverTheme *defaultTheme_ = nil;
         overlayView.autoresizesSubviews = NO;
         overlayView.delegate = self;
         overlayView.passthroughViews = passthroughViews;
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:backgroundView action:@selector(tapOut)];
-        tap.cancelsTouchesInView = NO;
-        [overlayView addGestureRecognizer:tap];
         
         backgroundView = [[WYPopoverBackgroundView alloc] initWithContentSize:contentViewSize];
         backgroundView.appearing = YES;
         
         backgroundView.delegate = self;
         backgroundView.hidden = YES;
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:backgroundView action:@selector(tapOut)];
+        tap.cancelsTouchesInView = NO;
+        [overlayView addGestureRecognizer:tap];
         
         [inView.window addSubview:backgroundView];
         [inView.window insertSubview:overlayView belowSubview:backgroundView];

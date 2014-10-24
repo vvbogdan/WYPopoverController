@@ -58,8 +58,6 @@ typedef NS_OPTIONS(NSUInteger, WYPopoverAnimationOptions) {
 
 @interface WYPopoverBackgroundView : UIView
 
--(void)tapOut;
-
 @property (nonatomic, strong) UIColor *tintColor                UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong) UIColor *fillTopColor             UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong) UIColor *fillBottomColor          UI_APPEARANCE_SELECTOR;

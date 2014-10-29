@@ -1094,7 +1094,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     if ([viewController isKindOfClass:[UINavigationController class]])
     {
         UINavigationController* navigationController = (UINavigationController*)viewController;
-        navigationBarHeight = navigationController.navigationBar.bounds.size.height;
+        navigationBarHeight = navigationController.navigationBarHidden? 0 : navigationController.navigationBar.bounds.size.height;
     }
     
     contentView.frame = CGRectIntegral([self innerRect]);

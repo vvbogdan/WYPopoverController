@@ -822,14 +822,6 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 @implementation WYPopoverOverlayView
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if ([self.delegate respondsToSelector:@selector(popoverOverlayViewDidTouch:)])
-    {
-        [self.delegate popoverOverlayViewDidTouch:self];
-    }
-}
-
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     if (testHits) {
@@ -907,6 +899,8 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 @property (nonatomic, assign) BOOL wantsDefaultContentAppearance;
 
 @property (nonatomic, assign, getter = isAppearing) BOOL appearing;
+
+- (void)tapOut;
 
 - (void)setViewController:(UIViewController *)viewController;
 
@@ -991,6 +985,11 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     return self;
 }
 
+- (void)tapOut
+{
+    [self.delegate popoverBackgroundViewDidTouchOutside:self];
+}
+
 /*
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
@@ -1010,21 +1009,6 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     return result;
 }
 */
-
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    UITouch *oneTouch = [touches anyObject];
-    CGPoint point = [oneTouch locationInView:self];
-    
-    if ([self isTouchedAtPoint:point] == NO)
-    {
-        if ([self.delegate respondsToSelector:@selector(popoverBackgroundViewDidTouchOutside:)])
-        {
-            [self.delegate popoverBackgroundViewDidTouchOutside:self];
-        }
-    }
-}
 
 - (UIEdgeInsets)outerShadowInsets
 {
@@ -2003,6 +1987,10 @@ static WYPopoverTheme *defaultTheme_ = nil;
         
         backgroundView.delegate = self;
         backgroundView.hidden = YES;
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:backgroundView action:@selector(tapOut)];
+        tap.cancelsTouchesInView = NO;
+        [overlayView addGestureRecognizer:tap];
         
         [inView.window addSubview:backgroundView];
         [inView.window insertSubview:overlayView belowSubview:backgroundView];

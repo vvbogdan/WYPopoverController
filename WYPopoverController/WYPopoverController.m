@@ -1699,8 +1699,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
     if (self)
     {
         // ignore orientation in iOS8
-        ignoreOrientation = [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)];
-
+        ignoreOrientation = (compileUsingIOS8SDK() && [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]);
         popoverLayoutMargins = UIEdgeInsetsMake(10, 10, 10, 10);
         keyboardRect = CGRectZero;
         animationDuration = WY_POPOVER_DEFAULT_ANIMATION_DURATION;
@@ -3020,6 +3019,15 @@ static WYPopoverTheme *defaultTheme_ = nil;
 
 #pragma mark Inline functions
 
+static BOOL compileUsingIOS8SDK() {
+    
+    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
+        return YES;
+    #endif
+    
+    return NO;
+}
+
 __unused static NSString* WYStringFromOrientation(NSInteger orientation) {
     NSString *result = @"Unknown";
     
@@ -3045,7 +3053,7 @@ __unused static NSString* WYStringFromOrientation(NSInteger orientation) {
 
 static float WYStatusBarHeight() {
 
-    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
+    if (compileUsingIOS8SDK() && [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
         CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
         return statusBarFrame.size.height;
     } else {
@@ -3070,7 +3078,7 @@ static float WYInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation ori
 {
     float angle;
     // no transformation needed in iOS 8
-    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
+    if (compileUsingIOS8SDK() && [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
         angle = 0.0;
     } else {
         switch (orientation)
@@ -3101,7 +3109,7 @@ static CGRect WYRectInWindowBounds(CGRect rect, UIInterfaceOrientation orientati
     float windowHeight = keyWindow.bounds.size.height;
     
     CGRect result = rect;
-    if (![[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
+    if (!(compileUsingIOS8SDK() && [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)])) {
         
         if (orientation == UIInterfaceOrientationLandscapeRight) {
             
@@ -3137,7 +3145,7 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
     float windowHeight = keyWindow.bounds.size.height;
     
     CGPoint result = origin;
-    if (![[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
+    if (!(compileUsingIOS8SDK() && [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)])) {
         
         if (orientation == UIInterfaceOrientationLandscapeRight) {
             result.x = windowWidth - origin.y - size.width;

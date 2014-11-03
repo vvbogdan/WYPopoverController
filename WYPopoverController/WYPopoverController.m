@@ -1203,12 +1203,9 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
         outerRect = CGRectInset(outerRect, 0.5, 0.5);
         
         // Inner Path
-        CGMutablePathRef outerPathRef;
-        if (!self.usesRoundedArrow || arrowDirection == WYPopoverArrowDirectionNone) {
-            outerPathRef = CGPathCreateMutable();
-        }
+        CGMutablePathRef outerPathRef = CGPathCreateMutable();
         
-        UIBezierPath* outerRectPath;
+        UIBezierPath* outerRectPath = [UIBezierPath bezierPath];
         
         CGPoint origin = CGPointZero;
         
@@ -1241,122 +1238,126 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
         
         if (arrowDirection == WYPopoverArrowDirectionUp)
         {
-            if (self.usesRoundedArrow) {
-                origin = CGPointMake(CGRectGetMidX(outerRect) + arrowOffset - (arrowBase / 2), CGRectGetMinY(outerRect) - arrowHeight);
+            origin = CGPointMake(CGRectGetMidX(outerRect) + arrowOffset - arrowBase / 2, CGRectGetMinY(outerRect));
+            
+            CGPathMoveToPoint(outerPathRef, NULL, origin.x, origin.y);
+            
+            if (self.usesRoundedArrow.boolValue) {
+                CGPoint roundedOrigin = CGPointMake(CGRectGetMidX(outerRect) + arrowOffset - (arrowBase / 2), CGRectGetMinY(outerRect) - arrowHeight);
                 CGFloat controlLength = arrowBase / 5.f;
                 
                 UIBezierPath* arrowPath = UIBezierPath.bezierPath;
-                [arrowPath moveToPoint: CGPointMake(origin.x + 0, origin.y + arrowHeight)];
-                [arrowPath addCurveToPoint: CGPointMake(origin.x + (arrowBase / 2), origin.y + 0) controlPoint1: CGPointMake(origin.x + controlLength, origin.y + 12) controlPoint2: CGPointMake(origin.x + ((arrowBase / 2) - (controlLength * 0.75f)), origin.y + 0)];
-                [arrowPath addCurveToPoint: CGPointMake(origin.x + arrowBase, origin.y + arrowHeight) controlPoint1: CGPointMake(origin.x + ((arrowBase / 2) + (controlLength * 0.75f)), origin.y + 0) controlPoint2: CGPointMake(origin.x + (arrowBase - controlLength), origin.y + arrowHeight)];
+                [arrowPath moveToPoint: CGPointMake(roundedOrigin.x + 0, roundedOrigin.y + arrowHeight)];
+                [arrowPath addCurveToPoint: CGPointMake(roundedOrigin.x + (arrowBase / 2), roundedOrigin.y + 0) controlPoint1: CGPointMake(roundedOrigin.x + controlLength, roundedOrigin.y + 12) controlPoint2: CGPointMake(roundedOrigin.x + ((arrowBase / 2) - (controlLength * 0.75f)), roundedOrigin.y + 0)];
+                [arrowPath addCurveToPoint: CGPointMake(roundedOrigin.x + arrowBase, roundedOrigin.y + arrowHeight) controlPoint1: CGPointMake(roundedOrigin.x + ((arrowBase / 2) + (controlLength * 0.75f)), roundedOrigin.y + 0) controlPoint2: CGPointMake(roundedOrigin.x + (arrowBase - controlLength), roundedOrigin.y + arrowHeight)];
                 [UIColor.whiteColor setFill];
                 [arrowPath fill];
+                
                 outerRectPath = arrowPath;
             } else {
-                origin = CGPointMake(CGRectGetMidX(outerRect) + arrowOffset - arrowBase / 2, CGRectGetMinY(outerRect));
-                
-                CGPathMoveToPoint(outerPathRef, NULL, origin.x, origin.y);
-                
                 CGPathAddLineToPoint(outerPathRef, NULL, CGRectGetMidX(outerRect) + arrowOffset, CGRectGetMinY(outerRect) - arrowHeight);
                 CGPathAddLineToPoint(outerPathRef, NULL, CGRectGetMidX(outerRect) + arrowOffset + arrowBase / 2, CGRectGetMinY(outerRect));
-                
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), (arrowOffset >= 0) ? reducedOuterCornerRadius : outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), (arrowOffset < 0) ? reducedOuterCornerRadius : outerCornerRadius);
-                
-                CGPathAddLineToPoint(outerPathRef, NULL, origin.x, origin.y);
             }
+            
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), (arrowOffset >= 0) ? reducedOuterCornerRadius : outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), (arrowOffset < 0) ? reducedOuterCornerRadius : outerCornerRadius);
+            
+            CGPathAddLineToPoint(outerPathRef, NULL, origin.x, origin.y);
         }
         
         if (arrowDirection == WYPopoverArrowDirectionDown)
         {
-            if (self.usesRoundedArrow) {
-                origin = CGPointMake(CGRectGetMidX(outerRect) + arrowOffset - (arrowBase / 2), CGRectGetMaxY(outerRect));
+            origin = CGPointMake(CGRectGetMidX(outerRect) + arrowOffset + arrowBase / 2, CGRectGetMaxY(outerRect));
+            
+            CGPathMoveToPoint(outerPathRef, NULL, origin.x, origin.y);
+            
+            if (self.usesRoundedArrow.boolValue) {
+                CGPoint roundedOrigin = CGPointMake(CGRectGetMidX(outerRect) + arrowOffset - (arrowBase / 2), CGRectGetMaxY(outerRect));
                 CGFloat controlLength = arrowBase / 5.f;
                 
                 UIBezierPath* arrowPath = UIBezierPath.bezierPath;
-                [arrowPath moveToPoint: CGPointMake(origin.x + 0, origin.y + 0)];
-                [arrowPath addCurveToPoint: CGPointMake(origin.x + (arrowBase / 2), origin.y + arrowHeight) controlPoint1: CGPointMake(origin.x + controlLength, origin.y + 0) controlPoint2: CGPointMake(origin.x + ((arrowBase / 2) - (controlLength * 0.75f)), origin.y + arrowHeight)];
-                [arrowPath addCurveToPoint: CGPointMake(origin.x + arrowBase, origin.y + 0) controlPoint1: CGPointMake(origin.x + ((arrowBase / 2) + (controlLength * 0.75f)), origin.y + arrowHeight) controlPoint2: CGPointMake(origin.x + (arrowBase - controlLength), origin.y + 0)];
+                [arrowPath moveToPoint: CGPointMake(roundedOrigin.x + 0, roundedOrigin.y + 0)];
+                [arrowPath addCurveToPoint: CGPointMake(roundedOrigin.x + (arrowBase / 2), roundedOrigin.y + arrowHeight) controlPoint1: CGPointMake(roundedOrigin.x + controlLength, roundedOrigin.y + 0) controlPoint2: CGPointMake(roundedOrigin.x + ((arrowBase / 2) - (controlLength * 0.75f)), roundedOrigin.y + arrowHeight)];
+                [arrowPath addCurveToPoint: CGPointMake(roundedOrigin.x + arrowBase, roundedOrigin.y + 0) controlPoint1: CGPointMake(roundedOrigin.x + ((arrowBase / 2) + (controlLength * 0.75f)), roundedOrigin.y + arrowHeight) controlPoint2: CGPointMake(roundedOrigin.x + (arrowBase - controlLength), roundedOrigin.y + 0)];
                 [UIColor.whiteColor setFill];
                 [arrowPath fill];
+                
                 outerRectPath = arrowPath;
             } else {
-                origin = CGPointMake(CGRectGetMidX(outerRect) + arrowOffset + arrowBase / 2, CGRectGetMaxY(outerRect));
-                
-                CGPathMoveToPoint(outerPathRef, NULL, origin.x, origin.y);
-                
                 CGPathAddLineToPoint(outerPathRef, NULL, CGRectGetMidX(outerRect) + arrowOffset, CGRectGetMaxY(outerRect) + arrowHeight);
                 CGPathAddLineToPoint(outerPathRef, NULL, CGRectGetMidX(outerRect) + arrowOffset - arrowBase / 2, CGRectGetMaxY(outerRect));
-                
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), (arrowOffset < 0) ? reducedOuterCornerRadius : outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), (arrowOffset >= 0) ? reducedOuterCornerRadius : outerCornerRadius);
-                
-                CGPathAddLineToPoint(outerPathRef, NULL, origin.x, origin.y);
             }
+            
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), (arrowOffset < 0) ? reducedOuterCornerRadius : outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), (arrowOffset >= 0) ? reducedOuterCornerRadius : outerCornerRadius);
+            
+            CGPathAddLineToPoint(outerPathRef, NULL, origin.x, origin.y);
         }
         
         if (arrowDirection == WYPopoverArrowDirectionLeft)
         {
-            if (self.usesRoundedArrow) {
-                origin = CGPointMake(CGRectGetMinX(outerRect) - arrowHeight, CGRectGetMidY(outerRect) + arrowOffset - ( arrowBase / 2));
+            origin = CGPointMake(CGRectGetMinX(outerRect), CGRectGetMidY(outerRect) + arrowOffset + arrowBase / 2);
+            
+            CGPathMoveToPoint(outerPathRef, NULL, origin.x, origin.y);
+            
+            if (self.usesRoundedArrow.boolValue) {
+                CGPoint roundedOrigin = CGPointMake(CGRectGetMinX(outerRect) - arrowHeight, CGRectGetMidY(outerRect) + arrowOffset - ( arrowBase / 2));
                 CGFloat controlLength = arrowBase / 5.f;
                 
                 UIBezierPath* arrowPath = UIBezierPath.bezierPath;
-                [arrowPath moveToPoint: CGPointMake(origin.x + arrowHeight, origin.y + arrowBase)];
-                [arrowPath addCurveToPoint: CGPointMake(origin.x + 0, origin.y + (arrowBase / 2)) controlPoint1: CGPointMake(origin.x + arrowHeight, origin.y + (arrowBase - controlLength)) controlPoint2: CGPointMake(origin.x + 0, origin.y + ((arrowBase / 2) + controlLength))];
-                [arrowPath addCurveToPoint: CGPointMake(origin.x + arrowHeight, origin.y + 0) controlPoint1: CGPointMake(origin.x + 0, origin.y + ((arrowBase / 2) - controlLength)) controlPoint2: CGPointMake(origin.x + arrowHeight, origin.y + controlLength)];
+                [arrowPath moveToPoint: CGPointMake(roundedOrigin.x + arrowHeight, roundedOrigin.y + arrowBase)];
+                [arrowPath addCurveToPoint: CGPointMake(roundedOrigin.x + 0, roundedOrigin.y + (arrowBase / 2)) controlPoint1: CGPointMake(roundedOrigin.x + arrowHeight, roundedOrigin.y + (arrowBase - controlLength)) controlPoint2: CGPointMake(roundedOrigin.x + 0, roundedOrigin.y + ((arrowBase / 2) + controlLength))];
+                [arrowPath addCurveToPoint: CGPointMake(roundedOrigin.x + arrowHeight, roundedOrigin.y + 0) controlPoint1: CGPointMake(roundedOrigin.x + 0, roundedOrigin.y + ((arrowBase / 2) - controlLength)) controlPoint2: CGPointMake(roundedOrigin.x + arrowHeight, roundedOrigin.y + controlLength)];
                 [UIColor.whiteColor setFill];
                 [arrowPath fill];
+                
                 outerRectPath = arrowPath;
             } else {
-                origin = CGPointMake(CGRectGetMinX(outerRect), CGRectGetMidY(outerRect) + arrowOffset + arrowBase / 2);
-                
-                CGPathMoveToPoint(outerPathRef, NULL, origin.x, origin.y);
-                
                 CGPathAddLineToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect) - arrowHeight, CGRectGetMidY(outerRect) + arrowOffset);
                 CGPathAddLineToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMidY(outerRect) + arrowOffset - arrowBase / 2);
-                
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), (arrowOffset < 0) ? reducedOuterCornerRadius : outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), (arrowOffset >= 0) ? reducedOuterCornerRadius : outerCornerRadius);
-                
-                CGPathAddLineToPoint(outerPathRef, NULL, origin.x, origin.y);
             }
+            
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), (arrowOffset < 0) ? reducedOuterCornerRadius : outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), (arrowOffset >= 0) ? reducedOuterCornerRadius : outerCornerRadius);
+            
+            CGPathAddLineToPoint(outerPathRef, NULL, origin.x, origin.y);
         }
         
         if (arrowDirection == WYPopoverArrowDirectionRight)
         {
-            if (self.usesRoundedArrow) {
-                origin = CGPointMake(CGRectGetMaxX(outerRect), CGRectGetMidY(outerRect) + arrowOffset - ( arrowBase / 2));
+            origin = CGPointMake(CGRectGetMaxX(outerRect), CGRectGetMidY(outerRect) + arrowOffset - arrowBase / 2);
+            
+            CGPathMoveToPoint(outerPathRef, NULL, origin.x, origin.y);
+            
+            if (self.usesRoundedArrow.boolValue) {
+                CGPoint roundedOrigin = CGPointMake(CGRectGetMaxX(outerRect), CGRectGetMidY(outerRect) + arrowOffset - ( arrowBase / 2));
                 CGFloat controlLength = arrowBase / 5.f;
                 
                 UIBezierPath* arrowPath = UIBezierPath.bezierPath;
-                [arrowPath moveToPoint: CGPointMake(origin.x + 0, origin.y + arrowBase)];
-                [arrowPath addCurveToPoint: CGPointMake(origin.x + arrowHeight, origin.y + (arrowBase / 2)) controlPoint1: CGPointMake(origin.x + 0, origin.y + (arrowBase - controlLength)) controlPoint2: CGPointMake(origin.x + arrowHeight, origin.y + ((arrowBase / 2) + controlLength))];
-                [arrowPath addCurveToPoint: CGPointMake(origin.x + 0, origin.y + 0) controlPoint1: CGPointMake(origin.x + arrowHeight, origin.y + ((arrowBase / 2) - controlLength)) controlPoint2: CGPointMake(origin.x + 0, origin.y + controlLength)];
+                [arrowPath moveToPoint: CGPointMake(roundedOrigin.x + 0, roundedOrigin.y + arrowBase)];
+                [arrowPath addCurveToPoint: CGPointMake(roundedOrigin.x + arrowHeight, roundedOrigin.y + (arrowBase / 2)) controlPoint1: CGPointMake(roundedOrigin.x + 0, roundedOrigin.y + (arrowBase - controlLength)) controlPoint2: CGPointMake(roundedOrigin.x + arrowHeight, roundedOrigin.y + ((arrowBase / 2) + controlLength))];
+                [arrowPath addCurveToPoint: CGPointMake(roundedOrigin.x + 0, roundedOrigin.y + 0) controlPoint1: CGPointMake(roundedOrigin.x + arrowHeight, roundedOrigin.y + ((arrowBase / 2) - controlLength)) controlPoint2: CGPointMake(roundedOrigin.x + 0, roundedOrigin.y + controlLength)];
                 [UIColor.whiteColor setFill];
                 [arrowPath fill];
+                
                 outerRectPath = arrowPath;
             } else {
-                origin = CGPointMake(CGRectGetMaxX(outerRect), CGRectGetMidY(outerRect) + arrowOffset - arrowBase / 2);
-                
-                CGPathMoveToPoint(outerPathRef, NULL, origin.x, origin.y);
-                
                 CGPathAddLineToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect) + arrowHeight, CGRectGetMidY(outerRect) + arrowOffset);
                 CGPathAddLineToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMidY(outerRect) + arrowOffset + arrowBase / 2);
-                
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), (arrowOffset >= 0) ? reducedOuterCornerRadius : outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), outerCornerRadius);
-                CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), (arrowOffset < 0) ? reducedOuterCornerRadius : outerCornerRadius);
-                
-                CGPathAddLineToPoint(outerPathRef, NULL, origin.x, origin.y);
             }
+            
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), (arrowOffset >= 0) ? reducedOuterCornerRadius : outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect), CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMinX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), outerCornerRadius);
+            CGPathAddArcToPoint(outerPathRef, NULL, CGRectGetMaxX(outerRect), CGRectGetMinY(outerRect), CGRectGetMaxX(outerRect), CGRectGetMaxY(outerRect), (arrowOffset < 0) ? reducedOuterCornerRadius : outerCornerRadius);
+            
+            CGPathAddLineToPoint(outerPathRef, NULL, origin.x, origin.y);
         }
         
         if (arrowDirection == WYPopoverArrowDirectionNone)
@@ -1376,11 +1377,8 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
             CGPathAddLineToPoint(outerPathRef, NULL, origin.x, origin.y);
         }
         
-        if (!self.usesRoundedArrow || arrowDirection == WYPopoverArrowDirectionNone) {
-            CGPathCloseSubpath(outerPathRef);
-            
-            outerRectPath = [UIBezierPath bezierPathWithCGPath:outerPathRef];
-        }
+        CGPathCloseSubpath(outerPathRef);
+        [outerRectPath appendPath:[UIBezierPath bezierPathWithCGPath:outerPathRef]];
         
         CGContextSaveGState(context);
         {
@@ -1427,10 +1425,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
         [outerRectPath stroke];
         
         //// Cleanup
-        if (!self.usesRoundedArrow || arrowDirection == WYPopoverArrowDirectionNone) {
-            CFRelease(outerPathRef);
-        }
-        
+        CFRelease(outerPathRef);
         CGGradientRelease(fillGradient);
         CGColorSpaceRelease(colorSpace);
         
@@ -1703,8 +1698,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
     if (self)
     {
         // ignore orientation in iOS8
-        ignoreOrientation = [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)];
-
+        ignoreOrientation = (compileUsingIOS8SDK() && [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]);
         popoverLayoutMargins = UIEdgeInsetsMake(10, 10, 10, 10);
         keyboardRect = CGRectZero;
         animationDuration = WY_POPOVER_DEFAULT_ANIMATION_DURATION;
@@ -3026,6 +3020,15 @@ static WYPopoverTheme *defaultTheme_ = nil;
 
 #pragma mark Inline functions
 
+static BOOL compileUsingIOS8SDK() {
+    
+    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
+        return YES;
+    #endif
+    
+    return NO;
+}
+
 __unused static NSString* WYStringFromOrientation(NSInteger orientation) {
     NSString *result = @"Unknown";
     
@@ -3051,7 +3054,7 @@ __unused static NSString* WYStringFromOrientation(NSInteger orientation) {
 
 static float WYStatusBarHeight() {
 
-    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
+    if (compileUsingIOS8SDK() && [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
         CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
         return statusBarFrame.size.height;
     } else {
@@ -3076,7 +3079,7 @@ static float WYInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation ori
 {
     float angle;
     // no transformation needed in iOS 8
-    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
+    if (compileUsingIOS8SDK() && [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
         angle = 0.0;
     } else {
         switch (orientation)
@@ -3107,7 +3110,7 @@ static CGRect WYRectInWindowBounds(CGRect rect, UIInterfaceOrientation orientati
     float windowHeight = keyWindow.bounds.size.height;
     
     CGRect result = rect;
-    if (![[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
+    if (!(compileUsingIOS8SDK() && [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)])) {
         
         if (orientation == UIInterfaceOrientationLandscapeRight) {
             
@@ -3143,7 +3146,7 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
     float windowHeight = keyWindow.bounds.size.height;
     
     CGPoint result = origin;
-    if (![[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)]) {
+    if (!(compileUsingIOS8SDK() && [[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)])) {
         
         if (orientation == UIInterfaceOrientationLandscapeRight) {
             result.x = windowWidth - origin.y - size.width;

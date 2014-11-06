@@ -814,6 +814,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 @protocol WYPopoverOverlayViewDelegate <NSObject>
 
 @optional
+- (BOOL)dismissOnPassthroughViewTap;
 - (void)popoverOverlayViewDidTouch:(WYPopoverOverlayView *)overlayView;
 
 @end
@@ -841,6 +842,16 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
         
         if ([self isPassthroughView:superHitView])
         {
+            if ([self.delegate dismissOnPassthroughViewTap])
+            {
+                dispatch_async(dispatch_get_main_queue(), ^
+                {
+                    if ([self.delegate respondsToSelector:@selector(popoverOverlayViewDidTouch:)])
+                    {
+                        [self.delegate popoverOverlayViewDidTouch:self];
+                    }
+                });
+            }
             return superHitView;
         }
     }
@@ -917,8 +928,6 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 - (id)initWithContentSize:(CGSize)contentSize;
 
-- (BOOL)isTouchedAtPoint:(CGPoint)point;
-
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -992,26 +1001,6 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 {
     [self.delegate popoverBackgroundViewDidTouchOutside:self];
 }
-
-/*
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
-{
-    BOOL result = [super pointInside:point withEvent:event];
-    
-    if (self.isAppearing == NO)
-    {
-        BOOL isTouched = [self isTouchedAtPoint:point];
-        
-        if (isTouched == NO && UIAccessibilityIsVoiceOverRunning())
-        {
-            UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
-            UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, NSLocalizedString(@"Double-tap to dismiss pop-up window.", nil));
-        }
-    }
-    
-    return result;
-}
-*/
 
 - (UIEdgeInsets)outerShadowInsets
 {
@@ -1552,18 +1541,6 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     return result;
 }
 
-- (BOOL)isTouchedAtPoint:(CGPoint)point
-{
-    BOOL result = NO;
-    
-    CGRect outerRect = [self outerRect];
-    CGRect arrowRect = [self arrowRect];
-    
-    result = (CGRectContainsPoint(outerRect, point) || CGRectContainsPoint(arrowRect, point));
-    
-    return result;
-}
-
 #pragma mark Memory Management
 
 - (void)dealloc
@@ -1991,6 +1968,13 @@ static WYPopoverTheme *defaultTheme_ = nil;
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:backgroundView action:@selector(tapOut)];
         tap.cancelsTouchesInView = NO;
         [overlayView addGestureRecognizer:tap];
+        
+        if (self.dismissOnTap)
+        {
+            tap = [[UITapGestureRecognizer alloc] initWithTarget:backgroundView action:@selector(tapOut)];
+            tap.cancelsTouchesInView = NO;
+            [backgroundView addGestureRecognizer:tap];
+        }
         
         [inView.window addSubview:backgroundView];
         [inView.window insertSubview:overlayView belowSubview:backgroundView];
@@ -2799,22 +2783,17 @@ static WYPopoverTheme *defaultTheme_ = nil;
 
 - (void)popoverOverlayViewDidTouch:(WYPopoverOverlayView *)aOverlayView
 {
-    //BOOL isTouched = [containerView isTouchedAtPoint:[containerView convertPoint:aPoint fromView:aOverlayView]];
+    BOOL shouldDismiss = !viewController.modalInPopover;
     
-    //if (!isTouched)
-    //{
-        BOOL shouldDismiss = !viewController.modalInPopover;
-        
-        if (shouldDismiss && delegate && [delegate respondsToSelector:@selector(popoverControllerShouldDismissPopover:)])
-        {
-            shouldDismiss = [delegate popoverControllerShouldDismissPopover:self];
-        }
-        
-        if (shouldDismiss)
-        {
-            [self dismissPopoverAnimated:animated options:options completion:nil callDelegate:YES];
-        }
-    //}
+    if (shouldDismiss && delegate && [delegate respondsToSelector:@selector(popoverControllerShouldDismissPopover:)])
+    {
+        shouldDismiss = [delegate popoverControllerShouldDismissPopover:self];
+    }
+    
+    if (shouldDismiss)
+    {
+        [self dismissPopoverAnimated:animated options:options completion:nil callDelegate:YES];
+    }
 }
 
 #pragma mark WYPopoverBackgroundViewDelegate

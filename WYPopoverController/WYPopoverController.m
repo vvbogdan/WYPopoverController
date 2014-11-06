@@ -2686,6 +2686,11 @@ static WYPopoverTheme *defaultTheme_ = nil;
         {
             [strongSelf->delegate popoverControllerDidDismissPopover:strongSelf];
         }
+        
+        if (self.dismissCompletionBlock)
+        {
+            self.dismissCompletionBlock(strongSelf);
+        }
     };
     
     if (isListeningNotifications == YES)

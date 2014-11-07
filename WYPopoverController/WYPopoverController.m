@@ -406,7 +406,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
 @implementation WYPopoverTheme
 
 @synthesize usesRoundedArrow;
-@synthesize dimBackgroundViewsTintColor;
+@synthesize dimsBackgroundViewsTintColor;
 @synthesize tintColor;
 @synthesize fillTopColor;
 @synthesize fillBottomColor;
@@ -454,7 +454,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
     WYPopoverTheme *result = [[WYPopoverTheme alloc] init];
     
     result.usesRoundedArrow = NO;
-    result.dimBackgroundViewsTintColor = YES;
+    result.dimsBackgroundViewsTintColor = YES;
     result.tintColor = [UIColor colorWithRed:55./255. green:63./255. blue:71./255. alpha:1.0];
     result.outerStrokeColor = nil;
     result.innerStrokeColor = nil;
@@ -486,7 +486,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
     WYPopoverTheme *result = [[WYPopoverTheme alloc] init];
     
     result.usesRoundedArrow = YES;
-    result.dimBackgroundViewsTintColor = YES;
+    result.dimsBackgroundViewsTintColor = YES;
     result.tintColor = [UIColor colorWithRed:244./255. green:244./255. blue:244./255. alpha:1.0];
     result.outerStrokeColor = [UIColor clearColor];
     result.innerStrokeColor = [UIColor clearColor];
@@ -1728,7 +1728,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
     @autoreleasepool {
         WYPopoverBackgroundView *appearance = [WYPopoverBackgroundView appearance];
         appearance.usesRoundedArrow = aTheme.usesRoundedArrow;
-        appearance.dimBackgroundViewsTintColor = aTheme.dimBackgroundViewsTintColor;
+        appearance.dimsBackgroundViewsTintColor = aTheme.dimsBackgroundViewsTintColor;
         appearance.tintColor = aTheme.tintColor;
         appearance.outerStrokeColor = aTheme.outerStrokeColor;
         appearance.innerStrokeColor = aTheme.innerStrokeColor;
@@ -1784,7 +1784,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
         
         WYPopoverBackgroundView *appearance = [WYPopoverBackgroundView appearance];
         theme.usesRoundedArrow = appearance.usesRoundedArrow;
-        theme.dimBackgroundViewsTintColor = appearance.dimBackgroundViewsTintColor;
+        theme.dimsBackgroundViewsTintColor = appearance.dimsBackgroundViewsTintColor;
         theme.tintColor = appearance.tintColor;
         theme.outerStrokeColor = appearance.outerStrokeColor;
         theme.innerStrokeColor = appearance.innerStrokeColor;
@@ -1868,7 +1868,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
     
     if (backgroundView != nil) {
         backgroundView.usesRoundedArrow = theme.usesRoundedArrow;
-        backgroundView.dimBackgroundViewsTintColor = theme.dimBackgroundViewsTintColor;
+        backgroundView.dimsBackgroundViewsTintColor = theme.dimsBackgroundViewsTintColor;
         backgroundView.tintColor = theme.tintColor;
         backgroundView.outerStrokeColor = theme.outerStrokeColor;
         backgroundView.innerStrokeColor = theme.innerStrokeColor;
@@ -2115,7 +2115,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
     
     void (^adjustTintDimmed)() = ^() {
 #ifdef WY_BASE_SDK_7_ENABLED
-        if (backgroundView.dimBackgroundViewsTintColor && [inView.window respondsToSelector:@selector(setTintAdjustmentMode:)]) {
+        if (backgroundView.dimsBackgroundViewsTintColor && [inView.window respondsToSelector:@selector(setTintAdjustmentMode:)]) {
             for (UIView *subview in inView.window.subviews) {
                 if (subview != backgroundView) {
                     [subview setTintAdjustmentMode:UIViewTintAdjustmentModeDimmed];

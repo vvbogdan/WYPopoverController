@@ -58,36 +58,39 @@ typedef NS_OPTIONS(NSUInteger, WYPopoverAnimationOptions) {
 
 @interface WYPopoverBackgroundView : UIView
 
-@property (nonatomic, strong) NSNumber *usesRoundedArrow        UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) NSNumber *adjustsTintColor        UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *tintColor                UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *fillTopColor             UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *fillBottomColor          UI_APPEARANCE_SELECTOR;
+// UI_APPEARANCE_SELECTOR doesn't support BOOLs on iOS 7,
+// so these two need to be NSUInteger instead
+@property (nonatomic, assign) NSUInteger usesRoundedArrow                   UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSUInteger dimsBackgroundViewsTintColor       UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic, strong) UIColor *glossShadowColor         UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) CGSize   glossShadowOffset        UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) NSUInteger  glossShadowBlurRadius    UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *tintColor                            UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *fillTopColor                         UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *fillBottomColor                      UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic, assign) NSUInteger  borderWidth              UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) NSUInteger  arrowBase                UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) NSUInteger  arrowHeight              UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *glossShadowColor                     UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) CGSize glossShadowOffset                      UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSUInteger glossShadowBlurRadius              UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic, strong) UIColor *outerShadowColor         UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *outerStrokeColor         UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) NSUInteger  outerShadowBlurRadius    UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) CGSize   outerShadowOffset        UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) NSUInteger  outerCornerRadius        UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) NSUInteger  minOuterCornerRadius     UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSUInteger borderWidth                        UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSUInteger arrowBase                          UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSUInteger arrowHeight                        UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic, strong) UIColor *innerShadowColor         UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *innerStrokeColor         UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) NSUInteger  innerShadowBlurRadius    UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) CGSize   innerShadowOffset        UI_APPEARANCE_SELECTOR;
-@property (nonatomic, assign) NSUInteger  innerCornerRadius        UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *outerShadowColor                     UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *outerStrokeColor                     UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSUInteger outerShadowBlurRadius              UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) CGSize outerShadowOffset                      UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSUInteger outerCornerRadius                  UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSUInteger minOuterCornerRadius               UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic, assign) UIEdgeInsets viewContentInsets    UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *innerShadowColor                     UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *innerStrokeColor                     UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSUInteger innerShadowBlurRadius              UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) CGSize innerShadowOffset                      UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSUInteger innerCornerRadius                  UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic, strong) UIColor *overlayColor             UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) UIEdgeInsets viewContentInsets                UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic, strong) UIColor *overlayColor                         UI_APPEARANCE_SELECTOR;
 
 @end
 
@@ -224,8 +227,11 @@ typedef NS_OPTIONS(NSUInteger, WYPopoverAnimationOptions) {
 
 @interface WYPopoverTheme : NSObject
 
-@property (nonatomic, strong) NSNumber *usesRoundedArrow;
-@property (nonatomic, strong) NSNumber *adjustsTintColor;
+// These two can be BOOLs, because implicit casting
+// between BOOLs and NSUIntegers works fine
+@property (nonatomic, assign) BOOL usesRoundedArrow;
+@property (nonatomic, assign) BOOL dimsBackgroundViewsTintColor;
+
 @property (nonatomic, strong) UIColor *tintColor;
 @property (nonatomic, strong) UIColor *fillTopColor;
 @property (nonatomic, strong) UIColor *fillBottomColor;

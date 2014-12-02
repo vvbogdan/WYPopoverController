@@ -97,7 +97,9 @@ typedef NS_OPTIONS(NSUInteger, WYPopoverAnimationOptions) {
 
 @property (nonatomic, weak) id <WYPopoverControllerDelegate> delegate;
 
+@property (nonatomic, assign) BOOL                              dismissOnTap;
 @property (nonatomic, copy) NSArray                            *passthroughViews;
+@property (nonatomic, assign) BOOL                              dismissOnPassthroughViewTap;
 @property (nonatomic, assign) BOOL                              wantsDefaultContentAppearance;
 @property (nonatomic, assign) UIEdgeInsets                      popoverLayoutMargins;
 @property (nonatomic, readonly, getter=isPopoverVisible) BOOL   popoverVisible;
@@ -106,6 +108,8 @@ typedef NS_OPTIONS(NSUInteger, WYPopoverAnimationOptions) {
 @property (nonatomic, assign) float                             animationDuration;
 
 @property (nonatomic, strong) WYPopoverTheme                   *theme;
+
+@property (nonatomic, copy) void (^dismissCompletionBlock)(WYPopoverController *dimissedController);
 
 + (void)setDefaultTheme:(WYPopoverTheme *)theme;
 + (WYPopoverTheme *)defaultTheme;

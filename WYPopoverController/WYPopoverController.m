@@ -316,7 +316,9 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
     if ([self isKindOfClass:[UINavigationController class]] == NO && self.navigationController != nil)
     {
 #ifdef WY_BASE_SDK_7_ENABLED
-        if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
+        if ([self.navigationController isEmbedInPopover] == NO) {
+            return;
+        } else if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
             [self.navigationController setPreferredContentSize:aSize];
         }
 #endif

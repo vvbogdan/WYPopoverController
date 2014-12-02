@@ -1199,7 +1199,10 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
         CGRect rect = self.bounds;
         
         CGRect outerRect = [self outerRect:rect arrowDirection:self.arrowDirection];
-        outerRect = CGRectInset(outerRect, 0.5, 0.5);
+        CGRect insetRect = CGRectInset(outerRect, 0.5, 0.5);
+        if (!CGRectIsEmpty(insetRect) && !CGRectIsInfinite(insetRect)) {
+            outerRect = insetRect;
+        }
         
         // Inner Path
         CGMutablePathRef outerPathRef = CGPathCreateMutable();

@@ -1968,6 +1968,21 @@ static WYPopoverTheme *defaultTheme_ = nil;
     [self positionPopover:YES];
 }
 
+- (void)setPopoverContentSize:(CGSize)size animated:(BOOL)animated
+{
+    popoverContentSize_ = size;
+    [self positionPopover:animated];
+}
+
+- (void)performWithoutAnimation:(void (^)(void))aBlock
+{
+    if (aBlock) {
+        self.implicitAnimationsDisabled = YES;
+        aBlock();
+        self.implicitAnimationsDisabled = NO;
+    }
+}
+
 - (void)presentPopoverFromRect:(CGRect)aRect
                         inView:(UIView *)aView
       permittedArrowDirections:(WYPopoverArrowDirection)aArrowDirections
@@ -2663,7 +2678,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
     
     containerFrame.origin = WYPointRelativeToOrientation(containerOrigin, containerFrame.size, orientation);
 
-    if (aAnimated == YES) {
+    if (aAnimated == YES && !self.implicitAnimationsDisabled) {
         backgroundView.frame = savedContainerFrame;
         __weak __typeof__(self) weakSelf = self;
         [UIView animateWithDuration:0.10f animations:^{
@@ -2799,7 +2814,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
     }
     @catch (NSException * __unused exception) {}
     
-    if (aAnimated)
+    if (aAnimated && !self.implicitAnimationsDisabled)
     {
         [UIView animateWithDuration:duration animations:^{
             __typeof__(self) strongSelf = weakSelf;

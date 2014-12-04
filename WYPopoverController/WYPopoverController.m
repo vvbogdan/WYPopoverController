@@ -200,7 +200,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   method_exchangeImplementations(original, swizzle);
 }
 
-- (BOOL)isWy_embedInPopover {
+- (BOOL)wy_isEmbedInPopover {
   BOOL result = NO;
   
   NSNumber *value = objc_getAssociatedObject(self, UINavigationControllerEmbedInPopoverTagKey);
@@ -250,7 +250,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
 }
 
 - (void)sizzled_pushViewController:(UIViewController *)aViewController animated:(BOOL)aAnimated {
-  if (self.wy_embedInPopover) {
+  if (self.wy_isEmbedInPopover) {
 #ifdef WY_BASE_SDK_7_ENABLED
     if ([aViewController respondsToSelector:@selector(setEdgesForExtendedLayout:)]) {
       aViewController.edgesForExtendedLayout = UIRectEdgeNone;
@@ -262,7 +262,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   
   [self sizzled_pushViewController:aViewController animated:aAnimated];
   
-  if (self.wy_embedInPopover) {
+  if (self.wy_isEmbedInPopover) {
     CGSize contentSize = [self contentSize:aViewController];
     [self setContentSize:contentSize];
   }
@@ -272,7 +272,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   NSUInteger count = [aViewControllers count];
   
 #ifdef WY_BASE_SDK_7_ENABLED
-  if (self.wy_embedInPopover && count > 0) {
+  if (self.wy_isEmbedInPopover && count > 0) {
     for (UIViewController *viewController in aViewControllers) {
       if ([viewController respondsToSelector:@selector(setEdgesForExtendedLayout:)]) {
         viewController.edgesForExtendedLayout = UIRectEdgeNone;
@@ -283,7 +283,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   
   [self sizzled_setViewControllers:aViewControllers animated:aAnimated];
   
-  if (self.wy_embedInPopover && count > 0) {
+  if (self.wy_isEmbedInPopover && count > 0) {
     UIViewController *topViewController = [aViewControllers objectAtIndex:(count - 1)];
     CGSize contentSize = [self contentSize:topViewController];
     [self setContentSize:contentSize];

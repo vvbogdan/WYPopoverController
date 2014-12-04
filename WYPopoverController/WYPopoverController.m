@@ -97,10 +97,10 @@ static CGRect _keyboardRect;
 
 @interface UIColor (WYPopover)
 
-- (BOOL)getValueOfRed:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)apha;
-- (NSString *)hexString;
-- (UIColor *)colorByLighten:(float)d;
-- (UIColor *)colorByDarken:(float)d;
+- (BOOL)wy_getValueOfRed:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)apha;
+- (NSString *)wy_hexString;
+- (UIColor *)wy_colorByLighten:(float)d;
+- (UIColor *)wy_colorByDarken:(float)d;
 
 @end
 
@@ -108,7 +108,7 @@ static CGRect _keyboardRect;
 
 @implementation UIColor (WYPopover)
 
-- (BOOL)getValueOfRed:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha {
+- (BOOL)wy_getValueOfRed:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha {
   // model: kCGColorSpaceModelRGB, num_comps: 4
   // model: kCGColorSpaceModelMonochrome, num_comps: 2
   
@@ -135,10 +135,10 @@ static CGRect _keyboardRect;
   return result;
 }
 
-- (NSString *)hexString {
+- (NSString *)wy_hexString {
   CGFloat rFloat, gFloat, bFloat, aFloat;
   int r, g, b, a;
-  [self getValueOfRed:&rFloat green:&gFloat blue:&bFloat alpha:&aFloat];
+  [self wy_getValueOfRed:&rFloat green:&gFloat blue:&bFloat alpha:&aFloat];
   
   r = (int)(255.0 * rFloat);
   g = (int)(255.0 * gFloat);
@@ -148,9 +148,9 @@ static CGRect _keyboardRect;
   return [NSString stringWithFormat:@"#%02x%02x%02x%02x", r, g, b, a];
 }
 
-- (UIColor *)colorByLighten:(float)d {
+- (UIColor *)wy_colorByLighten:(float)d {
   CGFloat rFloat, gFloat, bFloat, aFloat;
-  [self getValueOfRed:&rFloat green:&gFloat blue:&bFloat alpha:&aFloat];
+  [self wy_getValueOfRed:&rFloat green:&gFloat blue:&bFloat alpha:&aFloat];
   
   return [UIColor colorWithRed:MIN(rFloat + d, 1.0)
                          green:MIN(gFloat + d, 1.0)
@@ -158,9 +158,9 @@ static CGRect _keyboardRect;
                          alpha:1.0];
 }
 
-- (UIColor *)colorByDarken:(float)d {
+- (UIColor *)wy_colorByDarken:(float)d {
   CGFloat rFloat, gFloat, bFloat, aFloat;
-  [self getValueOfRed:&rFloat green:&gFloat blue:&bFloat alpha:&aFloat];
+  [self wy_getValueOfRed:&rFloat green:&gFloat blue:&bFloat alpha:&aFloat];
   
   return [UIColor colorWithRed:MAX(rFloat - d, 0.0)
                          green:MAX(gFloat - d, 0.0)
@@ -174,7 +174,7 @@ static CGRect _keyboardRect;
 
 @interface UINavigationController (WYPopover)
 
-@property(nonatomic, assign, getter = isEmbedInPopover) BOOL embedInPopover;
+@property(nonatomic, assign, getter = wy_isEmbedInPopover) BOOL wy_embedInPopover;
 
 @end
 
@@ -184,7 +184,7 @@ static CGRect _keyboardRect;
 
 static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINavigationControllerEmbedInPopoverTagKey";
 
-@dynamic embedInPopover;
+@dynamic wy_embedInPopover;
 
 + (void)load {
   Method original, swizzle;
@@ -200,7 +200,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   method_exchangeImplementations(original, swizzle);
 }
 
-- (BOOL)isEmbedInPopover {
+- (BOOL)isWy_embedInPopover {
   BOOL result = NO;
   
   NSNumber *value = objc_getAssociatedObject(self, UINavigationControllerEmbedInPopoverTagKey);
@@ -212,7 +212,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   return result;
 }
 
-- (void)setEmbedInPopover:(BOOL)value
+- (void)setWy_embedInPopover:(BOOL)value
 {
   objc_setAssociatedObject(self, UINavigationControllerEmbedInPopoverTagKey, [NSNumber numberWithBool:value], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
@@ -250,7 +250,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
 }
 
 - (void)sizzled_pushViewController:(UIViewController *)aViewController animated:(BOOL)aAnimated {
-  if (self.isEmbedInPopover) {
+  if (self.wy_embedInPopover) {
 #ifdef WY_BASE_SDK_7_ENABLED
     if ([aViewController respondsToSelector:@selector(setEdgesForExtendedLayout:)]) {
       aViewController.edgesForExtendedLayout = UIRectEdgeNone;
@@ -262,7 +262,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   
   [self sizzled_pushViewController:aViewController animated:aAnimated];
   
-  if (self.isEmbedInPopover) {
+  if (self.wy_embedInPopover) {
     CGSize contentSize = [self contentSize:aViewController];
     [self setContentSize:contentSize];
   }
@@ -272,7 +272,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   NSUInteger count = [aViewControllers count];
   
 #ifdef WY_BASE_SDK_7_ENABLED
-  if (self.isEmbedInPopover && count > 0) {
+  if (self.wy_embedInPopover && count > 0) {
     for (UIViewController *viewController in aViewControllers) {
       if ([viewController respondsToSelector:@selector(setEdgesForExtendedLayout:)]) {
         viewController.edgesForExtendedLayout = UIRectEdgeNone;
@@ -283,7 +283,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   
   [self sizzled_setViewControllers:aViewControllers animated:aAnimated];
   
-  if (self.isEmbedInPopover && count > 0) {
+  if (self.wy_embedInPopover && count > 0) {
     UIViewController *topViewController = [aViewControllers objectAtIndex:(count - 1)];
     CGSize contentSize = [self contentSize:topViewController];
     [self setContentSize:contentSize];
@@ -338,7 +338,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   if ([self isKindOfClass:[UINavigationController class]] == NO && self.navigationController != nil)
   {
 #ifdef WY_BASE_SDK_7_ENABLED
-    if ([self.navigationController isEmbedInPopover] == NO) {
+    if ([self.navigationController wy_isEmbedInPopover] == NO) {
       return;
     } else if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
       [self.navigationController setPreferredContentSize:aSize];
@@ -361,7 +361,6 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#pragma mark
 #pragma mark - WYPopoverArea
 
 @implementation WYPopoverArea
@@ -438,7 +437,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
   result.outerStrokeColor = nil;
   result.innerStrokeColor = nil;
   result.fillTopColor = result.tintColor;
-  result.fillBottomColor = [result.tintColor colorByDarken:0.4];
+  result.fillBottomColor = [result.tintColor wy_colorByDarken:0.4];
   result.glossShadowColor = nil;
   result.glossShadowOffset = CGSizeMake(0, 1.5);
   result.glossShadowBlurRadius = 0;
@@ -516,15 +515,15 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
 }
 
 - (UIColor *)innerStrokeColor {
-  return _innerStrokeColor?: [self.fillTopColor colorByDarken:0.6];
+  return _innerStrokeColor?: [self.fillTopColor wy_colorByDarken:0.6];
 }
 
 - (UIColor *)outerStrokeColor {
-  return _outerStrokeColor?: [self.fillTopColor colorByDarken:0.6];
+  return _outerStrokeColor?: [self.fillTopColor wy_colorByDarken:0.6];
 }
 
 - (UIColor *)glossShadowColor {
-  return _glossShadowColor?: [self.fillTopColor colorByLighten:0.2];
+  return _glossShadowColor?: [self.fillTopColor wy_colorByLighten:0.2];
 }
 
 - (UIColor *)fillTopColor {
@@ -545,13 +544,12 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
 
 @interface UIImage (WYPopover)
 
-+ (UIImage *)imageWithColor:(UIColor *)color;
++ (UIImage *)wy_imageWithColor:(UIColor *)color;
 
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#pragma mark
 #pragma mark - UIImage (WYPopover)
 
 @implementation UIImage (WYPopover)
@@ -560,7 +558,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
   return cornerRadius * 2 + 1;
 }
 
-+ (UIImage *)imageWithColor:(UIColor *)color {
++ (UIImage *)wy_imageWithColor:(UIColor *)color {
   return [self imageWithColor:color size:CGSizeMake(8, 8) cornerRadius:0];
 }
 
@@ -714,7 +712,6 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#pragma mark
 #pragma mark - WYPopoverOverlayViewDelegate
 
 @protocol WYPopoverOverlayViewDelegate <NSObject>
@@ -727,7 +724,6 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#pragma mark
 #pragma mark - WYPopoverOverlayView
 
 @implementation WYPopoverOverlayView
@@ -784,7 +780,6 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#pragma mark
 #pragma mark - WYPopoverBackgroundViewDelegate
 
 @protocol WYPopoverBackgroundViewDelegate <NSObject>
@@ -2032,7 +2027,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
 - (void)setPopoverNavigationBarBackgroundImage {
   if ([_viewController isKindOfClass:[UINavigationController class]] == YES) {
     UINavigationController *navigationController = (UINavigationController *)_viewController;
-    navigationController.embedInPopover = YES;
+    navigationController.wy_embedInPopover = YES;
     
 #ifdef WY_BASE_SDK_7_ENABLED
     if ([navigationController respondsToSelector:@selector(setEdgesForExtendedLayout:)]) {
@@ -2042,7 +2037,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
 #endif
     
     if (_wantsDefaultContentAppearance == NO) {
-      [navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:[UIColor clearColor]] forBarMetrics:UIBarMetricsDefault];
+      [navigationController.navigationBar setBackgroundImage:[UIImage wy_imageWithColor:[UIColor clearColor]] forBarMetrics:UIBarMetricsDefault];
     }
   }
   

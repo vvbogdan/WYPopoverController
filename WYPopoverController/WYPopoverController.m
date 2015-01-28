@@ -1,5 +1,5 @@
 /*
- Version 0.2.2
+ Version 0.3.6
 
  WYPopoverController is available under the MIT license.
 
@@ -2410,6 +2410,9 @@ static WYPopoverTheme *defaultTheme_ = nil;
 
       [strongSelf->_overlayView removeFromSuperview];
       strongSelf->_overlayView = nil;
+
+      // inView is captured strongly in presentPopoverInRect:... method, so it needs to be released in dismiss method to avoid potential retain cycles
+      strongSelf->inView = nil;
     }
 
     if (completion) {

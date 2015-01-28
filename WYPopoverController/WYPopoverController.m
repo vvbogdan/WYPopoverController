@@ -2412,7 +2412,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
       strongSelf->_overlayView = nil;
 
       // inView is captured strongly in presentPopoverInRect:... method, so it needs to be released in dismiss method to avoid potential retain cycles
-      strongSelf->inView = nil;
+      strongSelf->_inView = nil;
     }
 
     if (completion) {

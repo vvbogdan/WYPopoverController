@@ -341,7 +341,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
     if ([self.navigationController wy_isEmbedInPopover] == NO) {
       return;
     } else if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
-      [self.navigationController setPreferredContentSize:aSize];
+      [self.navigationController sizzled_setPreferredContentSize:aSize];
     }
 #endif
   }

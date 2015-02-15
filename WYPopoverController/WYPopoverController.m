@@ -2733,7 +2733,7 @@ static float WYStatusBarHeight() {
     CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
     statusBarHeight = statusBarFrame.size.height;
 
-    if (UIDeviceOrientationIsLandscape(orientation))
+    if (UIInterfaceOrientationIsLandscape(orientation))
     {
       statusBarHeight = statusBarFrame.size.width;
     }

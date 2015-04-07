@@ -2644,7 +2644,15 @@ static WYPopoverTheme *defaultTheme_ = nil;
 
   float minX, maxX, minY, maxY = 0;
 
-  float keyboardHeight = UIInterfaceOrientationIsPortrait(orientation) ? WYKeyboardListener.rect.size.height : WYKeyboardListener.rect.size.width;
+  float keyboardHeight = WYKeyboardListener.rect.size.height;
+  float overlayWidth = _overlayView.bounds.size.width;
+  float overlayHeight = _overlayView.bounds.size.height;
+  
+  if (!_ignoreOrientation && UIInterfaceOrientationIsLandscape(orientation)) {
+    keyboardHeight = WYKeyboardListener.rect.size.width;
+    overlayWidth = _overlayView.bounds.size.height;
+    overlayHeight = _overlayView.bounds.size.width;
+  }
 
   if (_delegate && [_delegate respondsToSelector:@selector(popoverControllerShouldIgnoreKeyboardBounds:)]) {
     BOOL shouldIgnore = [_delegate popoverControllerShouldIgnoreKeyboardBounds:self];
@@ -2653,10 +2661,6 @@ static WYPopoverTheme *defaultTheme_ = nil;
       keyboardHeight = 0;
     }
   }
-
-  float overlayWidth = UIInterfaceOrientationIsPortrait(orientation) ? _overlayView.bounds.size.width : _overlayView.bounds.size.height;
-
-  float overlayHeight = UIInterfaceOrientationIsPortrait(orientation) ? _overlayView.bounds.size.height : _overlayView.bounds.size.width;
 
   minX = _popoverLayoutMargins.left;
   maxX = overlayWidth - _popoverLayoutMargins.right;

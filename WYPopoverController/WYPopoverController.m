@@ -2855,21 +2855,18 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
     _inView = [_barButtonItem valueForKey:@"view"];
     _rect = _inView.bounds;
   } else if ([_delegate respondsToSelector:@selector(popoverController:willRepositionPopoverToRect:inView:)]) {
-    CGRect anotherRect;
-    UIView *anotherInView;
+    CGRect anotherRect = CGRectZero;
+    UIView *anotherInView = nil;
 
     [_delegate popoverController:self willRepositionPopoverToRect:&anotherRect inView:&anotherInView];
 
-#pragma clang diagnostic push
-#pragma GCC diagnostic ignored "-Wtautological-pointer-compare"
-    if (&anotherRect != NULL) {
+    if (!CGRectEqualToRect(anotherRect, CGRectZero)) {
       _rect = anotherRect;
     }
 
-    if (&anotherInView != NULL) {
+    if (anotherInView != nil) {
       _inView = anotherInView;
     }
-#pragma GCC diagnostic pop
   }
 
   [self positionPopover:NO];

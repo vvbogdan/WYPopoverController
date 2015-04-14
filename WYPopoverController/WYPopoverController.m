@@ -2643,8 +2643,9 @@ static WYPopoverTheme *defaultTheme_ = nil;
   viewFrame = WYRectInWindowBounds(viewFrame, orientation);
 
   float minX, maxX, minY, maxY = 0;
-
-  float keyboardHeight = UIInterfaceOrientationIsPortrait(orientation) ? WYKeyboardListener.rect.size.height : WYKeyboardListener.rect.size.width;
+    
+  BOOL portrait = _ignoreOrientation ? YES : UIInterfaceOrientationIsPortrait(orientation);
+  float keyboardHeight = portrait ? WYKeyboardListener.rect.size.height : WYKeyboardListener.rect.size.width;
 
   if (_delegate && [_delegate respondsToSelector:@selector(popoverControllerShouldIgnoreKeyboardBounds:)]) {
     BOOL shouldIgnore = [_delegate popoverControllerShouldIgnoreKeyboardBounds:self];
@@ -2654,9 +2655,9 @@ static WYPopoverTheme *defaultTheme_ = nil;
     }
   }
 
-  float overlayWidth = UIInterfaceOrientationIsPortrait(orientation) ? _overlayView.bounds.size.width : _overlayView.bounds.size.height;
+  float overlayWidth = portrait ? _overlayView.bounds.size.width : _overlayView.bounds.size.height;
 
-  float overlayHeight = UIInterfaceOrientationIsPortrait(orientation) ? _overlayView.bounds.size.height : _overlayView.bounds.size.width;
+  float overlayHeight = portrait ? _overlayView.bounds.size.height : _overlayView.bounds.size.width;
 
   minX = _popoverLayoutMargins.left;
   maxX = overlayWidth - _popoverLayoutMargins.right;
@@ -2855,21 +2856,18 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
     _inView = [_barButtonItem valueForKey:@"view"];
     _rect = _inView.bounds;
   } else if ([_delegate respondsToSelector:@selector(popoverController:willRepositionPopoverToRect:inView:)]) {
-    CGRect anotherRect;
-    UIView *anotherInView;
+    CGRect anotherRect = CGRectZero;
+    UIView *anotherInView = nil;
 
     [_delegate popoverController:self willRepositionPopoverToRect:&anotherRect inView:&anotherInView];
 
-#pragma clang diagnostic push
-#pragma GCC diagnostic ignored "-Wtautological-pointer-compare"
-    if (&anotherRect != NULL) {
+    if (!CGRectEqualToRect(anotherRect, CGRectZero)) {
       _rect = anotherRect;
     }
 
-    if (&anotherInView != NULL) {
+    if (anotherInView != nil) {
       _inView = anotherInView;
     }
-#pragma GCC diagnostic pop
   }
 
   [self positionPopover:NO];

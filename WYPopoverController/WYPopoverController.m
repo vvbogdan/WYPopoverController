@@ -2643,9 +2643,8 @@ static WYPopoverTheme *defaultTheme_ = nil;
   viewFrame = WYRectInWindowBounds(viewFrame, orientation);
 
   float minX, maxX, minY, maxY = 0;
-    
-  BOOL portrait = _ignoreOrientation ? YES : UIInterfaceOrientationIsPortrait(orientation);
-  float keyboardHeight = portrait ? WYKeyboardListener.rect.size.height : WYKeyboardListener.rect.size.width;
+
+  float keyboardHeight = UIInterfaceOrientationIsPortrait(orientation) ? WYKeyboardListener.rect.size.height : WYKeyboardListener.rect.size.width;
 
   if (_delegate && [_delegate respondsToSelector:@selector(popoverControllerShouldIgnoreKeyboardBounds:)]) {
     BOOL shouldIgnore = [_delegate popoverControllerShouldIgnoreKeyboardBounds:self];
@@ -2655,9 +2654,9 @@ static WYPopoverTheme *defaultTheme_ = nil;
     }
   }
 
-  float overlayWidth = portrait ? _overlayView.bounds.size.width : _overlayView.bounds.size.height;
+  float overlayWidth = UIInterfaceOrientationIsPortrait(orientation) ? _overlayView.bounds.size.width : _overlayView.bounds.size.height;
 
-  float overlayHeight = portrait ? _overlayView.bounds.size.height : _overlayView.bounds.size.width;
+  float overlayHeight = UIInterfaceOrientationIsPortrait(orientation) ? _overlayView.bounds.size.height : _overlayView.bounds.size.width;
 
   minX = _popoverLayoutMargins.left;
   maxX = overlayWidth - _popoverLayoutMargins.right;
@@ -2856,18 +2855,21 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
     _inView = [_barButtonItem valueForKey:@"view"];
     _rect = _inView.bounds;
   } else if ([_delegate respondsToSelector:@selector(popoverController:willRepositionPopoverToRect:inView:)]) {
-    CGRect anotherRect = CGRectZero;
-    UIView *anotherInView = nil;
+    CGRect anotherRect;
+    UIView *anotherInView;
 
     [_delegate popoverController:self willRepositionPopoverToRect:&anotherRect inView:&anotherInView];
 
-    if (!CGRectEqualToRect(anotherRect, CGRectZero)) {
+#pragma clang diagnostic push
+#pragma GCC diagnostic ignored "-Wtautological-pointer-compare"
+    if (&anotherRect != NULL) {
       _rect = anotherRect;
     }
 
-    if (anotherInView != nil) {
+    if (&anotherInView != NULL) {
       _inView = anotherInView;
     }
+#pragma GCC diagnostic pop
   }
 
   [self positionPopover:NO];

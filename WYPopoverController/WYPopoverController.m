@@ -1691,7 +1691,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
 
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
 
-    result = CGSizeMake(UIDeviceOrientationIsPortrait(orientation) ? windowSize.width : windowSize.height, UIInterfaceOrientationIsLandscape(orientation) ? windowSize.width : windowSize.height);
+    result = CGSizeMake(UIInterfaceOrientationIsPortrait(orientation) ? windowSize.width : windowSize.height, UIInterfaceOrientationIsLandscape(orientation) ? windowSize.width : windowSize.height);
   }
 
   return result;

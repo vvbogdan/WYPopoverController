@@ -2221,7 +2221,6 @@ static WYPopoverTheme *defaultTheme_ = nil;
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
     
     CGSize contentViewSize = self.popoverContentSize;
-    CGSize minContainerSize = WY_POPOVER_MIN_SIZE;
     
     CGRect viewFrame;
     CGRect containerFrame = CGRectZero;
@@ -2239,6 +2238,14 @@ static WYPopoverTheme *defaultTheme_ = nil;
         if (shouldIgnore) {
             keyboardHeight = 0;
         }
+    }
+
+    CGSize minContainerSize = WY_POPOVER_MIN_SIZE;
+
+    if (delegate && [delegate respondsToSelector:@selector(popoverControllerMinSize:)]) {
+        CGSize minSizePopover = [delegate popoverControllerMinSize:self];
+
+        minContainerSize = CGSizeMake(MAX(minContainerSize.width, minSizePopover.width), MAX(minContainerSize.height, minSizePopover.height));
     }
     
     WYPopoverArrowDirection arrowDirection = permittedArrowDirections;

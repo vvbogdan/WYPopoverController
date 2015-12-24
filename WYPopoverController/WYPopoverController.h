@@ -202,6 +202,8 @@ typedef NS_OPTIONS(NSUInteger, WYPopoverAnimationOptions) {
 
 - (BOOL)popoverControllerShouldDismissPopover:(WYPopoverController *)popoverController;
 
+- (CGSize)popoverControllerMinSize:(WYPopoverController *)popoverController;
+
 - (void)popoverControllerDidPresentPopover:(WYPopoverController *)popoverController;
 
 - (void)popoverControllerDidDismissPopover:(WYPopoverController *)popoverController;

@@ -2083,13 +2083,13 @@ static WYPopoverTheme *defaultTheme_ = nil;
   }
 
 
-    CGSize minContainerSize = WY_POPOVER_MIN_SIZE;
+  CGSize minContainerSize = WY_POPOVER_MIN_SIZE;
 
-    if (delegate && [delegate respondsToSelector:@selector(popoverControllerMinSize:)]) {
-        CGSize minSizePopover = [delegate popoverControllerMinSize:self];
+  if (_delegate && [_delegate respondsToSelector:@selector(popoverControllerMinSize:)]) {
+    CGSize minSizePopover = [_delegate popoverControllerMinSize:self];
 
-        minContainerSize = CGSizeMake(MAX(minContainerSize.width, minSizePopover.width), MAX(minContainerSize.height, minSizePopover.height));
-    }
+    minContainerSize = CGSizeMake(MAX(minContainerSize.width, minSizePopover.width), MAX(minContainerSize.height, minSizePopover.height));
+  }
 
   WYPopoverArrowDirection arrowDirection = _permittedArrowDirections;
 
